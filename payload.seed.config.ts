@@ -7,7 +7,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { buildConfig } from "payload";
 import { postgresAdapter } from "@payloadcms/db-postgres";
-import { collections } from "./src/payload/collections/index";
+import { collections } from "./src/payload/collections/index.ts";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);

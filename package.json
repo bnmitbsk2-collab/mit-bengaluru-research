@@ -12,6 +12,7 @@
     "db:up": "docker compose up -d",
     "db:down": "docker compose down",
     "seed": "cross-env PAYLOAD_CONFIG_PATH=payload.seed.config.ts NODE_OPTIONS=--no-deprecation payload seed",
+    "deploy:help": "powershell -ExecutionPolicy Bypass -File scripts/deploy-free.ps1",
     "payload": "cross-env PAYLOAD_CONFIG_PATH=payload.config.ts payload"
   },
   "dependencies": {
