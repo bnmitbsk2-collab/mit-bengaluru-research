@@ -1,0 +1,98 @@
+@import url("https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,400&family=Inter:wght@400;500;600;700&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --color-ink-50: #f5f7fa;
+  --color-ink-100: #e7ecf3;
+  --color-ink-200: #c8d4e3;
+  --color-ink-300: #9bb0c9;
+  --color-ink-400: #6a85a6;
+  --color-ink-500: #486186;
+  --color-ink-600: #374d6c;
+  --color-ink-700: #2c3e58;
+  --color-ink-800: #1d2b40;
+  --color-ink-900: #0f1d30;
+  --color-ink-950: #08111e;
+
+  --color-accent-50: #fdf6ed;
+  --color-accent-100: #f9e6cc;
+  --color-accent-200: #f1c891;
+  --color-accent-300: #e9aa57;
+  --color-accent-400: #df8a2a;
+  --color-accent-500: #c46f1c;
+  --color-accent-600: #a45615;
+  --color-accent-700: #834213;
+  --color-accent-800: #6a3514;
+  --color-accent-900: #582d15;
+
+  --color-sand-50: #faf8f4;
+  --color-sand-100: #f3efe6;
+  --color-sand-200: #e6ddcc;
+
+  --font-serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #0f1d30;
+}
+
+* {
+  border-color: var(--color-ink-100);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, .font-serif {
+  font-family: var(--font-serif);
+}
+
+.container-prose {
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .container-prose {
+    padding-inline: 2rem;
+  }
+}
+
+.eyebrow {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-accent-600);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: var(--color-accent-200);
+  color: var(--color-ink-900);
+}
+
+/* Subtle scholarly hairline grid used in hero */
+.hairline-grid {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 56px 56px;
+}

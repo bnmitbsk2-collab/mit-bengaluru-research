@@ -1,0 +1,39 @@
+{
+  "name": "mit-bengaluru-research-portal",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "prebuild": "node scripts/generate-brochures.mjs",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "brochures": "node scripts/generate-brochures.mjs",
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down",
+    "seed": "cross-env PAYLOAD_CONFIG_PATH=payload.seed.config.ts NODE_OPTIONS=--no-deprecation payload seed",
+    "payload": "cross-env PAYLOAD_CONFIG_PATH=payload.config.ts payload"
+  },
+  "dependencies": {
+    "@next/env": "^16.2.7",
+    "@payloadcms/db-postgres": "^3.85.0",
+    "@payloadcms/next": "^3.85.0",
+    "@payloadcms/richtext-lexical": "^3.85.0",
+    "cross-env": "^10.1.0",
+    "dotenv": "^17.4.2",
+    "next": "^16.2.6",
+    "payload": "^3.85.0",
+    "react": "^19.0.1",
+    "react-dom": "^19.0.1",
+    "sharp": "^0.34.5"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.0.0",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "tailwindcss": "^4.0.0",
+    "tsx": "^4.22.4",
+    "typescript": "^5"
+  }
+}
