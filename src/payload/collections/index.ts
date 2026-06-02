@@ -1,5 +1,5 @@
 import type { CollectionConfig } from "payload";
-import { slugField, statusField } from "../fields/lifecycle.ts";
+import { slugField, statusField } from "../fields/lifecycle";
 
 export const Users: CollectionConfig = {
   slug: "users",

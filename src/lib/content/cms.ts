@@ -12,8 +12,6 @@ import type {
 } from "@/lib/types";
 import type { CollaborationModel, Metric } from "@/lib/types";
 
-type RelDoc = { id: string; slug?: string; title?: string; name?: string } | string;
-
 let payload: Payload | null = null;
 
 async function db(): Promise<Payload> {
@@ -25,19 +23,23 @@ function idStr(v: string | number): string {
   return String(v);
 }
 
-function relId(v: RelDoc | null | undefined): string {
+function relId(v: unknown): string {
   if (!v) return "";
-  return typeof v === "string" ? v : idStr(v.id);
+  if (typeof v === "string") return v;
+  const r = v as { id?: string | number };
+  return r.id != null ? idStr(r.id) : "";
 }
 
-function relSlug(v: RelDoc | null | undefined): string {
+function relSlug(v: unknown): string {
   if (!v || typeof v === "string") return "";
-  return v.slug ?? "";
+  const r = v as { slug?: string };
+  return r.slug ?? "";
 }
 
-function relName(v: RelDoc | null | undefined): string {
+function relName(v: unknown): string {
   if (!v || typeof v === "string") return "";
-  return v.name ?? v.title ?? "";
+  const r = v as { name?: string; title?: string };
+  return r.name ?? r.title ?? "";
 }
 
 function arr(v: unknown): string[] {
@@ -84,44 +86,45 @@ export async function fetchResearchers(): Promise<Researcher[]> {
     depth: 2,
     limit: 200,
   });
-  return docs.map((d) => mapResearcher(d as unknown as Record<string, unknown>));
+  return docs.map((d) => mapResearcher(d));
 }
 
-function mapResearcher(d: Record<string, unknown>): Researcher {
-  const domains = Array.isArray(d.domains)
-    ? (d.domains as RelDoc[]).map(relSlug).filter(Boolean)
+function mapResearcher(d: unknown): Researcher {
+  const row = d as Record<string, unknown>;
+  const domains = Array.isArray(row.domains)
+    ? row.domains.map(relSlug).filter(Boolean)
     : [];
-  const pubs = Array.isArray(d.publications)
-    ? (d.publications as RelDoc[]).map(relId).filter(Boolean)
+  const pubs = Array.isArray(row.publications)
+    ? row.publications.map(relId).filter(Boolean)
     : [];
-  const pats = Array.isArray(d.patents)
-    ? (d.patents as RelDoc[]).map(relId).filter(Boolean)
+  const pats = Array.isArray(row.patents)
+    ? row.patents.map(relId).filter(Boolean)
     : [];
-  const projs = Array.isArray(d.projects)
-    ? (d.projects as RelDoc[]).map(relId).filter(Boolean)
+  const projs = Array.isArray(row.projects)
+    ? row.projects.map(relId).filter(Boolean)
     : [];
-  const photo = d.photo as { url?: string } | string | null | undefined;
+  const photo = row.photo as { url?: string } | string | null | undefined;
   const photoUrl =
     photo && typeof photo === "object" && photo.url ? photo.url : undefined;
 
   return {
-    id: idStr(d.id as string | number),
-    slug: d.slug as string,
-    name: d.name as string,
+    id: idStr(row.id as string | number),
+    slug: row.slug as string,
+    name: row.name as string,
     photo: photoUrl,
-    designation: d.designation as string,
-    department: relName(d.department as RelDoc) || "MIT Bengaluru",
+    designation: row.designation as string,
+    department: relName(row.department) || "MIT Bengaluru",
     domains,
-    researchInterests: arr(d.researchInterests),
-    expertiseKeywords: arr(d.expertiseKeywords),
+    researchInterests: arr(row.researchInterests),
+    expertiseKeywords: arr(row.expertiseKeywords),
     publications: pubs,
     patents: pats,
     projects: projs,
-    consultancyAreas: arr(d.consultancyAreas),
-    collaborationInterests: arr(d.collaborationInterests),
-    email: d.email as string,
-    scholar: (d.scholar as string) || undefined,
-    bio: d.bio as string,
+    consultancyAreas: arr(row.consultancyAreas),
+    collaborationInterests: arr(row.collaborationInterests),
+    email: row.email as string,
+    scholar: (row.scholar as string) || undefined,
+    bio: row.bio as string,
   };
 }
 
@@ -135,7 +138,7 @@ export async function fetchResearcher(slug: string): Promise<Researcher | undefi
     depth: 2,
     limit: 1,
   });
-  return docs[0] ? mapResearcher(docs[0] as Record<string, unknown>) : undefined;
+  return docs[0] ? mapResearcher(docs[0]) : undefined;
 }
 
 export async function fetchResearchersByDomain(domainSlug: string): Promise<Researcher[]> {
@@ -156,14 +159,14 @@ export async function fetchFacilities(): Promise<Facility[]> {
     slug: d.slug as string,
     name: d.name as string,
     type: d.type as Facility["type"],
-    domain: relSlug(d.domain as RelDoc),
+    domain: relSlug(d.domain),
     short: d.short as string,
     summary: d.summary as string,
     description: paragraphs(d.description),
     capabilities: arr(d.capabilities),
     equipment: arr(d.equipment),
     services: arr(d.services),
-    leadSlug: relSlug(d.lead as RelDoc) || undefined,
+    leadSlug: relSlug(d.lead) || undefined,
   }));
 }
 
@@ -183,16 +186,16 @@ export async function fetchProjects(): Promise<Project[]> {
   return docs.map((d) => ({
     id: idStr(d.id),
     title: d.title as string,
-    piSlug: relSlug(d.pi as RelDoc),
+    piSlug: relSlug(d.pi),
     coInvestigators: Array.isArray(d.coInvestigators)
-      ? (d.coInvestigators as RelDoc[]).map(relSlug).filter(Boolean)
+      ? d.coInvestigators.map(relSlug).filter(Boolean)
       : [],
     fundingAgency: d.fundingAgency as string,
     amountLakh: d.amountLakh as number,
     status: d.projectStatus as Project["status"],
     startYear: d.startYear as number,
     endYear: d.endYear as number,
-    domain: relSlug(d.domain as RelDoc),
+    domain: relSlug(d.domain),
     summary: d.summary as string,
   }));
 }
@@ -218,7 +221,7 @@ export async function fetchPublications(): Promise<Publication[]> {
     year: d.year as number,
     type: d.pubType as Publication["type"],
     doi: (d.doi as string) || undefined,
-    domain: relSlug(d.domain as RelDoc),
+    domain: relSlug(d.domain),
   }));
 }
 
@@ -242,7 +245,7 @@ export async function fetchPatents(): Promise<Patent[]> {
     applicationNo: d.applicationNo as string,
     status: d.patentStatus as Patent["status"],
     year: d.year as number,
-    domain: relSlug(d.domain as RelDoc),
+    domain: relSlug(d.domain),
   }));
 }
 
