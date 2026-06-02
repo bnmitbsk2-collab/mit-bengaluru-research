@@ -84,7 +84,7 @@ export async function fetchResearchers(): Promise<Researcher[]> {
     depth: 2,
     limit: 200,
   });
-  return docs.map(mapResearcher);
+  return docs.map((d) => mapResearcher(d as Record<string, unknown>));
 }
 
 function mapResearcher(d: Record<string, unknown>): Researcher {
